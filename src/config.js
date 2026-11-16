@@ -63,6 +63,12 @@ export const config = {
         publicUrl: required('MEDIA_URL').replace(/\/+$/, ''),
       }
     : null,
+  // Keeps a free Render service awake (see keep-alive.js). Render sets RENDER_EXTERNAL_URL itself;
+  // KEEP_ALIVE_URL overrides it, and KEEP_ALIVE_URL=off switches the pings off.
+  keepAlive: {
+    url: env.KEEP_ALIVE_URL === 'off' ? '' : (env.KEEP_ALIVE_URL || env.RENDER_EXTERNAL_URL || '').replace(/\/+$/, ''),
+    minutes: Number(env.KEEP_ALIVE_MINUTES) || 14,
+  },
   // When the React app has been built, the backend can serve it too (one app to deploy).
   frontendDir,
   frontendDist: path.join(frontendDir, 'dist'),

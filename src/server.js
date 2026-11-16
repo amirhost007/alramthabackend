@@ -7,6 +7,7 @@ import { pool } from './db.js'
 import publicRoutes from './routes/public.js'
 import authRoutes from './routes/auth.js'
 import adminRoutes from './routes/admin.js'
+import { keepAliveStatus, startKeepAlive } from './keep-alive.js'
 
 const app = express()
 app.disable('x-powered-by')
@@ -29,9 +30,9 @@ app.use(express.json({ limit: '1mb' }))
 app.get('/api/health', async (req, res) => {
   try {
     await pool.query('SELECT 1')
-    res.json({ ok: true, database: 'connected' })
+    res.json({ ok: true, database: 'connected', keepAlive: keepAliveStatus() })
   } catch (err) {
-    res.status(503).json({ ok: false, database: err.code || 'error' })
+    res.status(503).json({ ok: false, database: err.code || 'error', keepAlive: keepAliveStatus() })
   }
 })
 
@@ -69,4 +70,5 @@ app.use((err, req, res, next) => {
 
 app.listen(config.port, () => {
   console.log(`Backend running on http://localhost:${config.port} (tables "${config.tablePrefix}*")`)
+  startKeepAlive()
 })

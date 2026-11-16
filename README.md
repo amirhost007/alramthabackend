@@ -48,3 +48,10 @@ own computer and `10` on the hosting (`DB_HOST=localhost`).
 | `/api/admin/*`                 | Admin panel: pages, projects, settings, menu, social, uploads, enquiries |
 
 If the database stops answering, the public routes serve the last good copy saved in `cache/`.
+
+## Keep-alive (Render)
+
+Render's free plan puts a service to sleep after 15 minutes without requests. While the backend runs, it calls
+its own `/api/health` every 14 minutes (`src/keep-alive.js`), so it stays awake. On Render this needs no
+settings; `GET /api/health` shows `"keepAlive": "every 14 minutes"` when it is on. One always-on service uses
+about 744 of the 750 free hours a month.
