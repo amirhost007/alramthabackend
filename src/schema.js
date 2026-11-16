@@ -1,0 +1,78 @@
+import { tbl } from './db.js'
+
+// Tables are prefixed (DB_TABLE_PREFIX) so they never clash with anything else in the same database.
+// JSON is stored in LONGTEXT columns, which works on every MySQL and MariaDB version.
+export const tables = [
+  `CREATE TABLE IF NOT EXISTS ${tbl.users} (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(120) NOT NULL DEFAULT 'Admin',
+    email VARCHAR(190) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+
+  `CREATE TABLE IF NOT EXISTS ${tbl.settings} (
+    name VARCHAR(100) PRIMARY KEY,
+    value LONGTEXT NOT NULL,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+
+  `CREATE TABLE IF NOT EXISTS ${tbl.menu_items} (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    parent_id INT UNSIGNED NULL,
+    label VARCHAR(100) NOT NULL,
+    url VARCHAR(255) NOT NULL,
+    description VARCHAR(255) NULL,
+    position INT NOT NULL DEFAULT 0,
+    is_visible TINYINT(1) NOT NULL DEFAULT 1,
+    new_tab TINYINT(1) NOT NULL DEFAULT 0,
+    INDEX (parent_id)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+
+  `CREATE TABLE IF NOT EXISTS ${tbl.social_links} (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    platform VARCHAR(40) NOT NULL,
+    url VARCHAR(255) NOT NULL DEFAULT '',
+    position INT NOT NULL DEFAULT 0,
+    is_visible TINYINT(1) NOT NULL DEFAULT 1
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+
+  `CREATE TABLE IF NOT EXISTS ${tbl.pages} (
+    slug VARCHAR(60) PRIMARY KEY,
+    title VARCHAR(120) NOT NULL,
+    content LONGTEXT NOT NULL,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+
+  `CREATE TABLE IF NOT EXISTS ${tbl.projects} (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    slug VARCHAR(160) NOT NULL UNIQUE,
+    title VARCHAR(200) NOT NULL,
+    client VARCHAR(160) NOT NULL DEFAULT '',
+    location VARCHAR(160) NOT NULL DEFAULT '',
+    sector VARCHAR(80) NOT NULL DEFAULT '',
+    year VARCHAR(10) NOT NULL DEFAULT '',
+    summary VARCHAR(500) NOT NULL DEFAULT '',
+    body LONGTEXT NULL,
+    scope LONGTEXT NULL,
+    cover_image VARCHAR(255) NOT NULL DEFAULT '',
+    gallery LONGTEXT NULL,
+    is_featured TINYINT(1) NOT NULL DEFAULT 0,
+    is_published TINYINT(1) NOT NULL DEFAULT 0,
+    position INT NOT NULL DEFAULT 0,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+
+  `CREATE TABLE IF NOT EXISTS ${tbl.enquiries} (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(160) NOT NULL,
+    email VARCHAR(190) NOT NULL,
+    phone VARCHAR(60) NOT NULL DEFAULT '',
+    company VARCHAR(160) NOT NULL DEFAULT '',
+    service VARCHAR(160) NOT NULL DEFAULT '',
+    message TEXT NOT NULL,
+    is_read TINYINT(1) NOT NULL DEFAULT 0,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+]
